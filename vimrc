@@ -41,6 +41,7 @@ set backspace=indent,eol,start
 set history=1000
 set statusline=\ %<%F[%1*%M%*%n%R%H]%=\ %y\ %0(%{&fileformat}\ %{&encoding}\ %c:%l/%L%)\
 
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Indentation and typesetting
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -79,7 +80,6 @@ set wrapscan			"
 set ignorecase smartcase	" 
 
 
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " about buffer
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -100,16 +100,24 @@ set termencoding=utf-8
 set encoding=utf8
 set fileencodings=utf8,ucs-bom,gbk,cp936,gb2312,gb18030
 
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Always show the signcolumn, otherwise it would shift the text each time
+" diagnostics appear/become resolved.
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("patch-8.1.1564")
+  " Recently vim can merge signcolumn and number column into one
+  set signcolumn=number
+else
+  set signcolumn=yes
+endif
+
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " about gvim/macvim
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if has("gui_running")
-    let system = system('uname -s')
-    if system == "Darwin\n"
-        set guifont=Droid\ Sans\ Mono\ Nerd\ Font\ Complete:h18 " 设置字体
-    else
-        set guifont=DroidSansMono\ Nerd\ Font\ Regular\ 18      " 设置字体
-    endif
+    set guifont=DejaVu\ Sans\ Mono\ 10
     set guioptions-=m           " 隐藏菜单栏
     set guioptions-=T           " 隐藏工具栏
     set guioptions-=L           " 隐藏左侧滚动条
@@ -119,47 +127,47 @@ if has("gui_running")
     set guicursor=n-v-c:ver5    " 设置光标为竖线
 endif
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" 定义函数SetTitle，自动插入文件头
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-func! SetTitle()
-    "如果文件类型为.sh文件
-    if &filetype == 'sh'
-        call setline(1,"\#########################################################################")
-        call append(line("."), "\# File Name: ".expand("%"))
-        call append(line(".")+1, "\# Author: lu.shuai")
-        call append(line(".")+2, "\# mail: lu.shuai@zte.com.cn")
-        call append(line(".")+3, "\# Created Time: ".strftime("%c"))
-        call append(line(".")+4, "\#########################################################################")
-        call append(line(".")+5, "\#!/bin/bash")
-        call append(line(".")+6, "")
-    else
-        call setline(1, "/*************************************************************************")
-        call append(line("."), "    > File Name: ".expand("%"))
-        call append(line(".")+1, "    > Author: lu.shuai")
-        call append(line(".")+2, "    > Mail: lu.shuai@zte.com.cn ")
-        call append(line(".")+3, "    > Created Time: ".strftime("%c"))
-        call append(line(".")+4, " ************************************************************************/")
-        call append(line(".")+5, "")
-    endif
-    if &filetype == 'cpp'
-        call append(line(".")+6, "#include<iostream>")
-        call append(line(".")+7, "using namespace std;")
-        call append(line(".")+8, "")
-    endif
-    if &filetype == 'c'
-        call append(line(".")+6, "#include<stdio.h>")
-        call append(line(".")+7, "")
-        call append(line(".")+8, "int main()")
-        call append(line(".")+9, "{")
-        call append(line(".")+10, "")
-        call append(line(".")+11, "}")
-        call append(line(".")+12, "")
-    endif
-    "新建文件后，自动定位到文件末尾
-    autocmd BufNewFile * normal G
-endfunc
-autocmd BufNewFile *.cpp,*.[ch],*.sh,*.java exec ":call SetTitle()"
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" 定义函数SetTitle，自动插入文件头
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"func! SetTitle()
+"    "如果文件类型为.sh文件
+"    if &filetype == 'sh'
+"        call setline(1,"\#########################################################################")
+"        call append(line("."), "\# File Name: ".expand("%"))
+"        call append(line(".")+1, "\# Author: lu.shuai")
+"        call append(line(".")+2, "\# mail: lu.shuai@zte.com.cn")
+"        call append(line(".")+3, "\# Created Time: ".strftime("%c"))
+"       call append(line(".")+4, "\#########################################################################")
+"       call append(line(".")+5, "\#!/bin/bash")
+"       call append(line(".")+6, "")
+"   else
+"       call setline(1, "/*************************************************************************")
+"       call append(line("."), "    > File Name: ".expand("%"))
+"       call append(line(".")+1, "    > Author: lu.shuai")
+"       call append(line(".")+2, "    > Mail: lu.shuai@zte.com.cn ")
+"        call append(line(".")+3, "    > Created Time: ".strftime("%c"))
+"        call append(line(".")+4, " ************************************************************************/")
+"        call append(line(".")+5, "")
+"     endif
+"     if &filetype == 'cpp'
+"         call append(line(".")+6, "#include<iostream>")
+"        call append(line(".")+7, "using namespace std;")
+"        call append(line(".")+8, "")
+"    endif
+"    if &filetype == 'c'
+"        call append(line(".")+6, "#include<stdio.h>")
+"        call append(line(".")+7, "")
+"        call append(line(".")+8, "int main()")
+"        call append(line(".")+9, "{")
+"        call append(line(".")+10, "")
+"        call append(line(".")+11, "}")
+"        call append(line(".")+12, "")
+"    endif
+"    "新建文件后，自动定位到文件末尾
+"    autocmd BufNewFile * normal G
+"endfunc
+"autocmd BufNewFile *.cpp,*.[ch],*.sh,*.java exec ":call SetTitle()"
 
 
 
@@ -178,13 +186,37 @@ autocmd BufNewFile *.cpp,*.[ch],*.sh,*.java exec ":call SetTitle()"
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 call plug#begin('~/.vim/plugged')
 
+Plug 'ludovicchabant/vim-gutentags'
 Plug 'chxuan/cpp-mode'
 Plug 'chxuan/vim-edit'
 Plug 'chxuan/change-colorscheme'
 Plug 'chxuan/prepare-code'
 Plug 'chxuan/vim-buffer'
-"Plug 'chxuan/tagbar'
-"Plug 'Valloric/YouCompleteMe'
+Plug 'chxuan/tagbar'
+
+Plug 'morhetz/gruvbox'
+
+Plug 'junegunn/vim-easy-align'
+Plug 'skywind3000/quickmenu.vim'
+Plug 'skywind3000/asyncrun.vim'
+
+" Plug 'Valloric/YouCompleteMe'
+
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'kevinoid/vim-jsonc'
+
+Plug 'davidhalter/jedi-vim'
+
+" Plug 'tomtom/tlib_vim'
+" Plug 'MarcWeber/vim-addon-mw-utils'
+" Plug 'garbas/vim-snipmate'
+" Plug 'honza/vim-snippets'
+" Plug 'jayli/vim-easycomplete'
+" Plug 'jayli/vim-dictionary'
+
+Plug 'luochen1990/rainbow'
+
+Plug 'Yggdroot/indentLine'
 Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
 Plug 'mileszs/ack.vim'
 Plug 'easymotion/vim-easymotion'
@@ -230,6 +262,9 @@ call plug#end()
 " load vim default plugin
 runtime macros/matchit.vim
 
+" 快速格式化json文件
+map <F4><Esc> :%!python3.8 -m json.tool<cr>
+
 " 编辑vimrc相关配置文件
 nnoremap <leader>e :edit $MYVIMRC<cr>
 nnoremap <leader>vc :edit ~/.vimrc.custom.config<cr>
@@ -271,12 +306,42 @@ nnoremap <leader><leader>p "+p
 " 打开文件自动定位到最后编辑的位置
 autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | execute "normal! g'\"" | endif
 
-" 主题设置
+" "主题设置
 set background=dark
 let g:onedark_termcolors=256
 "colorscheme onedark
 "colorscheme dracula
-colorscheme monokai
+"colorscheme monokai
+""使用gruvbox配色
+" autocmd vimenter * ++nested colorscheme gruvbox
+autocmd vimenter * ++nested colorscheme monokai
+" autocmd vimenter * ++nested colorscheme dracula
+" autocmd vimenter * ++nested colorscheme onedark
+
+
+" " jedi
+" let g:jedi#auto_initialization = 1
+" let g:jedi#auto_vim_configuration = 1
+" let g:jedi#use_tabs_not_buffers = 1
+" let g:jedi#use_splits_not_buffers = "left"
+" let g:jedi#popup_select_first = 1
+" let g:jedi#show_call_signatures = "1"
+
+" let g:jedi#goto_command = "<leader>d"
+" let g:jedi#goto_assignments_command = "<leader>g"
+" let g:jedi#goto_stubs_command = "<leader>s"
+" let g:jedi#goto_definitions_command = ""
+" let g:jedi#documentation_command = "K"
+" let g:jedi#usages_command = "<leader>n"
+" let g:jedi#completions_command = "<C-Space>"
+" let g:jedi#rename_command = "<leader>r"
+
+" let g:jedi#environment_path = "/opt/anaconda3/bin/python3"
+
+" let g:SuperTabDefaultCompletionType = "context"
+" let g:jedi#popup_on_dot = 0
+" let g:jedi#completions_enabled = 1
+
 
 " airline
 let g:airline_theme="onedark"
@@ -324,7 +389,7 @@ nnoremap C :ChangeText<cr>
 nnoremap <leader>r :ReplaceTo<space>
 
 " nerdtree
-"nnoremap <silent> <leader>n :NERDTreeToggle<cr>
+" nnoremap <silent> <leader>n :NERDTreeToggle<cr>
 nnoremap tt :NERDTreeToggle<cr>
 let g:NERDTreeFileExtensionHighlightFullName = 1
 let g:NERDTreeExactMatchHighlightFullName = 1
@@ -342,39 +407,14 @@ let g:NERDCommentEmptyLines = 1
 let g:NERDTrimTrailingWhitespace = 1
 let g:NERDToggleCheckAllLines = 1
 
-"" YCM
-"" 如果不指定python解释器路径，ycm会自己搜索一个合适的(与编译ycm时使用的python版本匹配)
-"" let g:ycm_server_python_interpreter = '/usr/bin/python2.7'
-"let g:ycm_confirm_extra_conf = 0 
-"let g:ycm_error_symbol = '✗'
-"let g:ycm_warning_symbol = '✹'
-"let g:ycm_seed_identifiers_with_syntax = 1 
-"let g:ycm_complete_in_comments = 1 
-"let g:ycm_complete_in_strings = 1 
-"let g:ycm_collect_identifiers_from_tags_files = 1
-"let g:ycm_semantic_triggers =  {
-"            \   'c' : ['->', '.','re![_a-zA-z0-9]'],
-"            \   'objc' : ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
-"            \             're!\[.*\]\s'],
-"            \   'ocaml' : ['.', '#'],
-"            \   'cpp,objcpp' : ['->', '.', '::','re![_a-zA-Z0-9]'],
-"            \   'perl' : ['->'],
-"            \   'php' : ['->', '::'],
-"            \   'cs,java,javascript,typescript,d,python,perl6,scala,vb,elixir,go' : ['.'],
-"            \   'ruby' : ['.', '::'],
-"            \   'lua' : ['.', ':'],
-"            \   'erlang' : [':'],
-"            \ }
-"nnoremap <leader>u :YcmCompleter GoToDeclaration<cr>
-"" 已经使用cpp-mode插件提供的转到函数实现的功能
-"" nnoremap <leader>i :YcmCompleter GoToDefinition<cr> 
-"nnoremap <leader>o :YcmCompleter GoToInclude<cr>
-"nnoremap <leader>ff :YcmCompleter FixIt<cr>
-"nmap <F5> :YcmDiags<cr>
 
-"" tagbar
-"let g:tagbar_width = 30
-"nnoremap <silent> <leader>t :TagbarToggle<cr>
+" "indentLine
+let g:indent_guides_guide_size = 1
+let g:indent_guides_start_level = 2
+
+" tagbar
+let g:tagbar_width = 30
+nnoremap <silent> <leader>t :TagbarToggle<cr>
 
 " incsearch.vim
 map /  <Plug>(incsearch-forward)
@@ -387,7 +427,7 @@ map <leader>w <Plug>(easymotion-bd-w)
 nmap <leader>w <Plug>(easymotion-overwin-w)
 
 " nerdtree-git-plugin
-let g:NERDTreeIndicatorMapCustom = {
+let g:NERDTreeGitStatusIndicatorMapCustom = {
             \ "Modified"  : "✹",
             \ "Staged"    : "✚",
             \ "Untracked" : "✭",
@@ -418,11 +458,11 @@ let g:echodoc_enable_at_startup = 1
 nnoremap <leader>l :Tab /\|<cr>
 nnoremap <leader>= :Tab /=<cr>
 
-" vim-smooth-scroll
-noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 0, 2)<CR>
-noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 0, 2)<CR>
-noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 0, 4)<CR>
-noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 0, 4)<CR>
+" " vim-smooth-scroll
+" noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 0, 2)<CR>
+" noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 0, 2)<CR>
+" noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 0, 4)<CR>
+" noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 0, 4)<CR>
 
 " gv
 nnoremap <leader>g :GV<cr>
@@ -433,3 +473,349 @@ nnoremap <leader>gg :GV?<cr>
 if filereadable(expand($HOME . '/.vimrc.custom.config'))
     source $HOME/.vimrc.custom.config
 endif
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" configuration for Coc.vim
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" load coc.vim if file exists
+if filereadable(expand($HOME . '/.vim/plugged/coc.nvim/plugin/coc.vim'))
+    source $HOME/.vim/plugged/coc.nvim/plugin/coc.vim
+endif
+" setup node path
+let g:coc_nodepath = '/usr/local/bin/node'
+
+" enable coc
+let g:coc_enabled = 1
+
+" disable startup warning 
+let g:coc_disable_startup_warning = 1
+
+" delay 500ms and then start coc
+let g:coc_start_at_startup = 0
+function! CocTimerStart(timer)
+    exec "CocStart"
+endfunction
+call timer_start(500,'CocTimerStart',{'repeat':1})
+
+"解决coc.nvim大文件卡死状况
+let g:trigger_size = 0.5 * 1048576
+
+augroup hugefile
+  autocmd!
+  autocmd BufReadPre *
+        \ let size = getfsize(expand('<afile>')) |
+        \ if (size > g:trigger_size) || (size == -2) |
+        \   echohl WarningMsg | echomsg 'WARNING: altering options for this huge file!' | echohl None |
+        \   exec 'CocDisable' |
+        \ else |
+        \   exec 'CocEnable' |
+        \ endif |
+        \ unlet size
+augroup END
+
+
+" Use `[g` and `]g` to navigate diagnostics
+" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Use K to show documentation in preview window.
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+" Highlight the symbol and its references when holding the cursor.
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Symbol renaming.
+nmap <leader>rn <Plug>(coc-rename)
+
+" Formatting selected code.
+xmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
+
+augroup mygroup
+  autocmd!
+  " Setup formatexpr specified filetype(s).
+  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  " Update signature help on jump placeholder.
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup end
+
+" Applying codeAction to the selected region.
+" Example: `<leader>aap` for current paragraph
+xmap <leader>a  <Plug>(coc-codeaction-selected)
+nmap <leader>a  <Plug>(coc-codeaction-selected)
+
+" Remap keys for applying codeAction to the current buffer.
+nmap <leader>ac  <Plug>(coc-codeaction)
+" Apply AutoFix to problem on the current line.
+nmap <leader>qf  <Plug>(coc-fix-current)
+
+" Map function and class text objects
+" NOTE: Requires 'textDocument.documentSymbol' support from the language server.
+xmap if <Plug>(coc-funcobj-i)
+omap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap af <Plug>(coc-funcobj-a)
+xmap ic <Plug>(coc-classobj-i)
+omap ic <Plug>(coc-classobj-i)
+xmap ac <Plug>(coc-classobj-a)
+omap ac <Plug>(coc-classobj-a)
+
+" Remap <C-f> and <C-b> for scroll float windows/popups.
+" Note coc#float#scroll works on neovim >= 0.4.3 or vim >= 8.2.0750
+nnoremap <nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+nnoremap <nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+inoremap <nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+inoremap <nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+
+" Use CTRL-S for selections ranges.
+" Requires 'textDocument/selectionRange' support of language server.
+nmap <silent> <C-s> <Plug>(coc-range-select)
+xmap <silent> <C-s> <Plug>(coc-range-select)
+
+" Add `:Format` command to format current buffer.
+command! -nargs=0 Format :call CocAction('format')
+" command! -nargs=* Cocformat call CocActionAsync('format')
+
+" Add `:Fold` command to fold current buffer.
+command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+
+" Add `:OR` command for organize imports of the current buffer.
+command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
+
+" Add (Neo)Vim's native statusline support.
+" NOTE: Please see `:h coc-status` for integrations with external plugins that
+" provide custom statusline: lightline.vim, vim-airline.
+set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+
+" " Mappings for CoCList
+" " Show all diagnostics.
+" nnoremap <silent><nowait> <space>a  :<C-u>CocList diagnostics<cr>
+" " Manage extensions.
+" nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
+" " Show commands.
+" nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
+" " Find symbol of current document.
+" nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
+" " Search workspace symbols.
+" nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
+" " Do default action for next item.
+" nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
+" " Do default action for previous item.
+" nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
+" " Resume latest coc list.
+" nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
+
+" " Use <tab> for trigger completion and navigate to the next complete item
+" function! s:check_back_space() abort
+"   let col = col('.') - 1
+"   return !col || getline('.')[col - 1]  =~ '\s'
+" endfunction
+
+" inoremap <silent><expr> <Tab>
+"       \ pumvisible() ? "\<C-n>" :
+"       \ <SID>check_back_space() ? "\<Tab>" :
+"       \ coc#refresh()
+
+" " Use <tab> and <s-tab> to navigate the completion list;
+" inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+" inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+
+
+""" other configuration of coc
+inoremap <silent><expr> <m-,> coc#refresh()
+nnoremap <leader>h :call CocAction('doHover')<cr>
+
+
+autocmd FileType css,html let b:coc_additional_keywords = ["-"]
+autocmd FileType php let b:coc_root_patterns = ['.htaccess', '.phpproject']
+autocmd FileType javascript let b:coc_root_patterns = ['.jsproject']
+autocmd FileType java let b:coc_root_patterns = ['.javasproject']
+autocmd FileType python let b:coc_root_patterns = ['.pyproject']
+autocmd FileType c,cpp let b:coc_root_patterns = ['.htaccess', '.cproject']
+let g:coc_snippet_next = '<tab>'
+let g:coc_snippet_prev = '<s-tab>'
+let g:coc_filetype_map = {
+        \ 'html.swig': 'html',
+        \ 'wxss': 'css',
+        \ }
+command! -nargs=0 OR
+        \ :call CocActionAsync('runCommand', 'tsserver.organizeImports')
+"let $NVIM_COC_LOG_LEVEL='debug'
+nnoremap <silent> ,y  :<C-u>CocList -A --normal yank<cr>
+autocmd FileType tex let b:coc_pairs = [["$", "$"]]
+nmap <f4> <Plug>(coc-translator-p)
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""" configuration for rainbow
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:rainbow_active = 1
+let g:rainbow_conf = {
+\   'guifgs': ['darkorange3', 'seagreen3', 'royalblue3', 'firebrick'],
+\   'ctermfgs': ['lightyellow', 'lightcyan','lightblue', 'lightmagenta'],
+\   'operators': '_,_',
+\   'parentheses': ['start=/(/ end=/)/ fold', 'start=/\[/ end=/\]/ fold', 'start=/{/ end=/}/ fold'],
+\   'separately': {
+\       '*': {},
+\       'tex': {
+\           'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/'],
+\       },
+\       'lisp': {
+\           'guifgs': ['darkorange3', 'seagreen3', 'royalblue3', 'firebrick'],
+\       },
+\       'vim': {
+\           'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/', 'start=/{/ end=/}/ fold', 'start=/(/ end=/)/ containedin=vimFuncBody', 'start=/\[/ end=/\]/ containedin=vimFuncBody', 'start=/{/ end=/}/ fold containedin=vimFuncBody'],
+\       },
+\       'html': {
+\           'parentheses': ['start=/\v\<((area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr)[ >])@!\z([-_:a-zA-Z0-9]+)(\s+[-_:a-zA-Z0-9]+(\=("[^"]*"|'."'".'[^'."'".']*'."'".'|[^ '."'".'"><=`]*))?)*\>/ end=#</\z1># fold'],
+\       },
+\       'css': 0,
+\   }
+\}
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""" configuration for vim-gutentags
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" gutentags 搜索工程目录的标志，碰到这些文件/目录名就停止向上一级目录递归
+let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
+
+" 所生成的数据文件的名称
+let g:gutentags_ctags_tagfile = '.tags'
+
+" 将自动生成的 tags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
+let s:vim_tags = expand('~/.cache/tags')
+let g:gutentags_cache_dir = s:vim_tags
+
+" 配置 ctags 的参数
+let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
+let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
+let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+
+" 检测 ~/.cache/tags 不存在就新建
+if !isdirectory(s:vim_tags)
+   silent! call mkdir(s:vim_tags, 'p')
+endif
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""" configuration for asyncrun
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 自动打开 quickfix window ，高度为 6
+let g:asyncrun_open = 6
+
+" 任务结束时候响铃提醒
+let g:asyncrun_bell = 1
+
+" 设置 F10 打开/关闭 Quickfix 窗口
+nnoremap <F10> :call asyncrun#quickfix_toggle(6)<cr>
+
+let g:asyncrun_rootmarks = ['.svn', '.git', '.root', '_darcs', 'build.xml']
+
+"" "key map for gcc/g++
+"nnoremap <silent> <F9> :AsyncRun g++ -Wall -O2 "$(VIM_FILEPATH)" -o "$(VIM_FILEDIR)/$(VIM_FILENOEXT)" <cr>
+"nnoremap <silent> <F11> :AsyncRun -raw -cwd=$(VIM_FILEDIR) "$(VIM_FILEDIR)/$(VIM_FILENOEXT)" <cr>
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""" auto compile and run for c/c++、Java、python
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+func! CompileGcc()
+    exec "w"
+    let compilecmd="!gcc "
+    let compileflag="-o %< "
+    if search("mpi\.h") != 0
+        let compilecmd = "!mpicc "
+    endif
+    if search("glut\.h") != 0
+        let compileflag .= " -lglut -lGLU -lGL "
+    endif
+    if search("cv\.h") != 0
+        let compileflag .= " -lcv -lhighgui -lcvaux "
+    endif
+    if search("omp\.h") != 0
+        let compileflag .= " -fopenmp "
+    endif
+    if search("math\.h") != 0
+        let compileflag .= " -lm "
+    endif
+    exec compilecmd." % ".compileflag
+endfunc
+func! CompileGpp()
+    exec "w"
+    let compilecmd="!g++ "
+    let compileflag="-o %< "
+    if search("mpi\.h") != 0
+        let compilecmd = "!mpic++ "
+    endif
+    if search("glut\.h") != 0
+        let compileflag .= " -lglut -lGLU -lGL "
+    endif
+    if search("cv\.h") != 0
+        let compileflag .= " -lcv -lhighgui -lcvaux "
+    endif
+    if search("omp\.h") != 0
+        let compileflag .= " -fopenmp "
+    endif
+    if search("math\.h") != 0
+        let compileflag .= " -lm "
+    endif
+    exec compilecmd." % ".compileflag
+endfunc
+
+func! RunPython()
+        exec "!time python3 %"
+endfunc
+func! CompileJava()
+    exec "!time javac %"
+endfunc
+
+
+func! CompileCode()
+        exec "w"
+        if &filetype == "cpp"
+                exec "call CompileGpp()"
+        elseif &filetype == "c"
+                exec "call CompileGcc()"
+        elseif &filetype == "python"
+                exec "call RunPython()"
+        elseif &filetype == "java"
+                exec "call CompileJava()"
+        endif
+endfunc
+
+func! RunResult()
+        exec "w"
+        if search("mpi\.h") != 0
+            exec "!mpirun -np 4 ./%<"
+        elseif &filetype == "cpp"
+            exec "! ./%<"
+        elseif &filetype == "c"
+            exec "! ./%<"
+        elseif &filetype == "python"
+            exec "call RunPython"
+        elseif &filetype == "java"
+            exec "!java %<"
+        endif
+endfunc
+
+map <F5> :call CompileCode()<CR>
+imap <F5> <ESC>:call CompileCode()<CR>
+vmap <F5> <ESC>:call CompileCode()<CR>
+
+map <F6> :call RunResult()<CR>
